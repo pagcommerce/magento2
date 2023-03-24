@@ -74,6 +74,15 @@
                     <label>Status Pedido Pago</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                 </field>
+                <field id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1">
+                    <label>Valor mínimo por Pedido</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1">
+                    <label>Valor máximo por Pedido</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+
             </group>
             <group id="pagcommerce_payment_boleto" translate="label comment" type="text" sortOrder="101" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Pagcommerce Boleto</label>
@@ -98,6 +107,14 @@
                 </field>
                 <field id="days" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Quantidade Dias Vencimento</label>
+                </field>
+                <field id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1">
+                    <label>Valor mínimo por Pedido</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1">
+                    <label>Valor máximo por Pedido</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
                 </field>
             </group>
         </section>
