@@ -28,7 +28,7 @@ if($order->getPayment()->getAdditionalInformation('boleto_url')): ?>
                             <input class="input" type="text" readonly="" value="<?php echo $order->getPayment()->getAdditionalInformation('boleto_barcode'); ?>">
                         </div>
 
-                        <div class="actions-toolbar">
+                        <div class="actions">
                             <a href="<?php echo $order->getPayment()->getAdditionalInformation('boleto_url'); ?>" target="_blank" title="Imprimir boleto" aria-label="Imprimir boleto" class="action primary">
                                 <span class="cctheme-text">Imprimir boleto</span>
                             </a>
@@ -102,7 +102,7 @@ if($order->getPayment()->getAdditionalInformation('boleto_url')): ?>
                         <img src="<?php echo $data['pix_qrcode']; ?>" alt="Escaneie esse QR Code para realizar o pagamento" class="cctheme-image" width="150" height="150">
                     </div>
                 </div>
-                <div class="actions-toolbar">
+                <div class="actions">
                     <button type="button" title="Copiar código Pix" aria-label="Copiar código Pix" class="action copy primary" data-clipboard-text="<?php echo $data['pix_string']; ?>">
                             <span class="cctheme-icon">
                                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
