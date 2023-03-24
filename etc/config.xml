@@ -5,7 +5,7 @@
         <payment>
             <pagcommerce_payment>
                 <enviroment>development</enviroment>
-                <enable_log>1</enable_log>
+                <enable_log>0</enable_log>
                 <address_logradouro>1</address_logradouro>
                 <address_numero>2</address_numero>
                 <address_complemento>4</address_complemento>
@@ -13,7 +13,7 @@
             </pagcommerce_payment>
             <pagcommerce_payment_pix>
                 <title>Pagcommerce PIX</title>
-                <active>1</active>
+                <active>0</active>
                 <payment_action>authorize</payment_action>
                 <model>Pagcommerce\Payment\Model\Method\Pix</model>
                 <order_status>pending</order_status>
@@ -26,7 +26,7 @@
             </pagcommerce_payment_pix>
             <pagcommerce_payment_boleto>
                 <title>Pagcommerce Boleto</title>
-                <active>1</active>
+                <active>0</active>
                 <model>Pagcommerce\Payment\Model\Method\Boleto</model>
                 <order_status>pending</order_status>
                 <paid_order_status>processing</paid_order_status>
