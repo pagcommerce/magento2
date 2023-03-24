@@ -15,7 +15,7 @@ $order = $block->getInfo()->getOrder();
     <dd class="content">
         <?php $data = $this->getInfo()->getAdditionalInformation(); ?>
         <?php if($order->getState() == \Magento\Sales\Model\Order::STATE_NEW && isset($data['boleto_url'])): ?>
-            <a href="<?php echo $data['boleto_url']; ?>" target="_blank">
+            <a class="action primary" href="<?php echo $data['boleto_url']; ?>" target="_blank">
                     Imprimir boleto
             </a>
         <?php endif; ?>
