@@ -20,7 +20,11 @@ Módulo de integração Pagcommerce para Magento 2.x
 composer require pagcommerce/magento2
 ```
 ```
-composer update
+bin/magento cache:clean
+```
+
+```
+bin/magento setup:upgrade
 ```
 
 ```
