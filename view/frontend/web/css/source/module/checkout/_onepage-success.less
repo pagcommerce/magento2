@@ -15,6 +15,12 @@
 @cctheme__text-danger__color: #FF0F00;
 
 .cctheme-onepagesuccess {
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
     & {
         margin: 20px 0 !important;
     }
@@ -110,8 +116,8 @@
     }
 
     #pix.cctheme-payment-block .cctheme-payment-summary .cctheme-image {
-        width: auto !important;
-        height: auto !important;
+        width: 150px !important;
+        height: 150px !important;
     }
     
     #boleto.cctheme-payment-block .cctheme-payment-summary {
