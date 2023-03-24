@@ -159,7 +159,7 @@ if($order->getPayment()->getAdditionalInformation('boleto_url')): ?>
         clipboard.on('success', function (e) {
             const currentLabel = e.trigger.innerHTML;
 
-            e.trigger.innerHTML = '<span class="cctheme-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.6875 4L6.6875 14L1.6875 9" stroke="#4a4948" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> </span><span class="cctheme-text">Código copiado!</span>';
+            e.trigger.innerHTML = '<span class="cctheme-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.6875 4L6.6875 14L1.6875 9" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> </span><span class="cctheme-text">Código copiado!</span>';
 
             setTimeout(() => {
                 e.trigger.innerHTML = currentLabel;
