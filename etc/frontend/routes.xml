@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="standard">
+        <!--Define a custom route with id and frontName-->
+        <route frontName="pagcommerce" id="pagcommerce">
+            <!--The module which this route match to-->
+            <module name="Pagcommerce_Payment"/>
+        </route>
+    </router>
+</config>

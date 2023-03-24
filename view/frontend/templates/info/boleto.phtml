@@ -1,0 +1,23 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var $block \Pagcommerce\Payment\Block\Info\Boleto
+ */
+$order = $block->getInfo()->getOrder();
+?>
+<dl class="payment-method pagcommerce_payment_boleto">
+    <dt class="title"><?= $block->escapeHtml($block->getMethod()->getTitle()) ?></dt>
+
+    <dd class="content">
+        <?php $data = $this->getInfo()->getAdditionalInformation(); ?>
+        <?php if($order->getState() == \Magento\Sales\Model\Order::STATE_NEW && isset($data['boleto_url'])): ?>
+            <a href="<?php echo $data['boleto_url']; ?>" target="_blank">
+                    Imprimir boleto
+            </a>
+        <?php endif; ?>
+    </dd>
+</dl>

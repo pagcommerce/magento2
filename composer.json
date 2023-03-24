@@ -1,0 +1,32 @@
+{
+  "name": "pagcommerce/magento2",
+  "description": "Pagcommerce Payment Method for Magento 2.x",
+  "type": "magento2-module",
+  "version": "1.0.0",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "require": {
+    "magento/module-sales": "*",
+    "magento/module-checkout": "*",
+    "magento/module-payment": "*",
+    "ext-curl": "*"
+  },
+  "authors": [
+    {
+      "name": "Pagcommerce",
+      "email": "dev@pagcommerce.com.br",
+      "homepage": "https://pagcommerce.com.br/",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Pagcommerce\\Payment\\": ""
+    }
+  }
+}

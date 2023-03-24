@@ -1,0 +1,105 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="pagcommerce_payment" translate="label comment" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Pagcommerce Configurações Gerais</label>
+                <field id="enviroment" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Modo</label>
+                    <source_model>Pagcommerce\Payment\Model\Config\Source\Environment</source_model>
+                </field>
+
+                <field id="sandbox_api_url" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>URL Api Sandbox</label>
+                    <depends>
+                        <field id="enviroment">development</field>
+                    </depends>
+                </field>
+
+
+                <field id="api_key" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Api_Key</label>
+                </field>
+                <field id="api_secret" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Api_Secret</label>
+                </field>
+
+
+
+
+                <field id="address_logradouro" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Campo Endereço (Logradouro)</label>
+                    <source_model>Pagcommerce\Payment\Model\Config\Source\Streetlines</source_model>
+                </field>
+
+                <field id="address_numero" translate="label" type="select" sortOrder="81" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Campo Endereço (Número)</label>
+                    <source_model>Pagcommerce\Payment\Model\Config\Source\Streetlines</source_model>
+                </field>
+
+                <field id="address_complemento" translate="label" type="select" sortOrder="82" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Campo Endereço (Complemento)</label>
+                    <source_model>Pagcommerce\Payment\Model\Config\Source\Streetlines</source_model>
+                </field>
+
+                <field id="address_bairro" translate="label" type="select" sortOrder="83" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Campo Endereço (Bairro)</label>
+                    <source_model>Pagcommerce\Payment\Model\Config\Source\Streetlines</source_model>
+                </field>
+
+
+
+
+
+                <field id="enable_log" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Ativar Logs</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+
+            </group>
+            <group id="pagcommerce_payment_pix" translate="label comment" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Pagcommerce PIX</label>
+                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Title</label>
+                </field>
+                <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Status Novo Pedido</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
+                </field>
+                <field id="paid_order_status" translate="label" type="select" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Status Pedido Pago</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                </field>
+            </group>
+            <group id="pagcommerce_payment_boleto" translate="label comment" type="text" sortOrder="101" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Pagcommerce Boleto</label>
+                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Title</label>
+                </field>
+                <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Status Novo Pedido</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
+                </field>
+                <field id="paid_order_status" translate="label" type="select" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Status Pedido Pago</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                </field>
+
+                <field id="comments" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Comentário Boleto</label>
+                </field>
+                <field id="days" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Quantidade Dias Vencimento</label>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,22 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var $block \Pagcommerce\Payment\Block\Info\Pix
+ */
+
+$order = $block->getInfo()->getOrder();
+
+?>
+<dl class="payment-method pagcommerce_payment_boleto">
+    <dt class="title"><?= $block->escapeHtml($block->getMethod()->getTitle()) ?></dt>
+    <dd class="content">
+        <?php $data = $this->getInfo()->getAdditionalInformation(); ?>
+        <?php if( $order->getState() == \Magento\Sales\Model\Order::STATE_NEW && isset($data['pix_qrcode'])): ?>
+            <img src="<?php echo $data['pix_qrcode']; ?>" alt="Escaneie esse QR Code para realizar o pagamento" class="cctheme-image" width="150" height="150">
+        <?php endif; ?>
+    </dd>
+</dl>

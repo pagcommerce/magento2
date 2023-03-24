@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <pagcommerce_payment>
+                <enviroment>development</enviroment>
+                <enable_log>1</enable_log>
+                <address_logradouro>1</address_logradouro>
+                <address_numero>2</address_numero>
+                <address_complemento>4</address_complemento>
+                <address_bairro>3</address_bairro>
+            </pagcommerce_payment>
+            <pagcommerce_payment_pix>
+                <title>Pagcommerce PIX</title>
+                <active>1</active>
+                <payment_action>authorize</payment_action>
+                <model>Pagcommerce\Payment\Model\Method\Pix</model>
+                <order_status>pending</order_status>
+                <paid_order_status>processing</paid_order_status>
+                <allowspecific>0</allowspecific>
+                <bank_number>450</bank_number>
+                <qrcode_width>150</qrcode_width>
+                <seller_name>Nome do Vendedor</seller_name>
+                <days>3</days>
+            </pagcommerce_payment_pix>
+            <pagcommerce_payment_boleto>
+                <title>Pagcommerce Boleto</title>
+                <active>1</active>
+                <model>Pagcommerce\Payment\Model\Method\Boleto</model>
+                <order_status>pending</order_status>
+                <paid_order_status>processing</paid_order_status>
+                <payment_action>authorize</payment_action>
+                <allowspecific>0</allowspecific>
+                <days>3</days>
+                <seller_name>Nome do Vendedor</seller_name>
+            </pagcommerce_payment_boleto>
+        </payment>
+    </default>
+</config>
