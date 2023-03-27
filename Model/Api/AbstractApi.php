@@ -8,13 +8,13 @@ abstract class AbstractApi{
     private $_erros = array();
     private $_environment = '';
 
-    /** @var \Magento\Framework\Logger\LoggerProxy  */
+    /** @var \Pagcommerce\Payment\Logger\Logger  */
     private $logger;
 
     /** @var \Magento\Store\Model\StoreManagerInterface  */
     private $storeManager;
 
-    public function __construct(\Psr\Log\LoggerInterface $logger, \Magento\Store\Model\StoreManagerInterface $storeManager){
+    public function __construct(\Pagcommerce\Payment\Logger\Logger $logger, \Magento\Store\Model\StoreManagerInterface $storeManager){
         $this->_environment = $this->getCoreConfig('payment/pagcommerce_payment/enviroment');
         $this->_key = $this->getCoreConfig('payment/pagcommerce_payment/api_key');
         $this->_secret = $this->getCoreConfig('payment/pagcommerce_payment/api_secret');
@@ -33,6 +33,7 @@ abstract class AbstractApi{
     public function sendRequest($uri, $data, $method = 'POST'){
         if($this->hasCredentials()){
             if($this->getEnvironment()){
+                $requestData = [];
                 if($method == 'POST'){
                     if(!$data){
                         $this->addErros('É necessário informar o POSTDATA');
@@ -40,6 +41,7 @@ abstract class AbstractApi{
                     }else{
                         if(is_array($data) || is_object($data) && $method == 'POST'){
                             $data = json_encode($data);
+                            $requestData = json_decode($data, true);
                         }
                     }
                 }
@@ -60,23 +62,24 @@ abstract class AbstractApi{
 
                 $logEnabled = $this->getCoreConfig('payment/pagcommerce_payment/enable_log');
                 if($logEnabled){
-                    if(is_string($data)){
-                        //Mage::log('REQUEST :'.$data, null, 'pagcommerce_payment.log');
-                    }
+                    $this->writeLog("REQUEST", $requestData);
+                }
 
-                }
                 $response = curl_exec($ch);
-                if($logEnabled){
-                    //Mage::log('RESPONSE :'.$response, null, 'pagcommerce_payment.log');
-                }
                 $error = curl_error($ch);
                 curl_close($ch);
 
                 if(!$error && $response){
                     $response = json_decode($response, true);
+                    if($logEnabled){
+                        $this->writeLog("RESPONSE", $response);
+                    }
                     return $response;
                 }else{
                     $this->addErros($error);
+                    if(is_array($error)){
+                        $this->writeLog("RESPONSE ERROR", $error);
+                    }
                 }
             }else{
                 $this->addErros('É necessário setar o ambiente da API pelo método set environmente passando constantes ENV_* dessa classe');
@@ -226,5 +229,9 @@ abstract class AbstractApi{
 
     public function formatCurrency($amount){
         return number_format($amount, 2, '.', '');
+    }
+
+    public function writeLog($title, $data = []){
+        $this->logger->debug($title, $data);
     }
 }
