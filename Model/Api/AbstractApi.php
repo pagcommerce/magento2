@@ -221,7 +221,7 @@ abstract class AbstractApi{
                 'country' => $address->getCountryId(),
             )
         );
-        $notificationUrl = $this->storeManager->getStore()->getUrl('pagcommerce/standard/notification');
+        $notificationUrl = $this->storeManager->getStore()->getBaseUrl().'pagcommerce/standard/notification';
 
         $data['notification_url'] = $notificationUrl;
         return $data;

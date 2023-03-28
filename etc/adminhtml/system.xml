@@ -66,12 +66,22 @@
                         <label>Title</label>
                         <config_path>payment/pagcommerce_payment_pix/title</config_path>
                     </field>
-                    <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <field id="days" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Qtd dias vencimento</label>
+                        <config_path>payment/pagcommerce_payment_pix/days</config_path>
+                    </field>
+                    <field id="cancel_orders" translate="label" type="select" sortOrder="32" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Cancelar pedidos após data de vencimento?</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>payment/pagcommerce_payment_pix/cancel_orders</config_path>
+                        <comment>Cancela o pedido 2 dias após o vencimento</comment>
+                    </field>
+                    <field id="order_status" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" canRestore="1">
                         <label>Status Novo Pedido</label>
                         <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
                         <config_path>payment/pagcommerce_payment_pix/order_status</config_path>
                     </field>
-                    <field id="paid_order_status" translate="label" type="select" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <field id="paid_order_status" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                         <label>Status Pedido Pago</label>
                         <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                         <config_path>payment/pagcommerce_payment_pix/paid_order_status</config_path>
@@ -103,25 +113,32 @@
                         <label>Title</label>
                         <config_path>payment/pagcommerce_payment_boleto/title</config_path>
                     </field>
-                    <field id="order_status" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <field id="days" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Quantidade Dias Vencimento</label>
+                        <config_path>payment/pagcommerce_payment_boleto/days</config_path>
+                    </field>
+                    <field id="cancel_orders" translate="label" type="select" sortOrder="32" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <label>Cancelar pedidos após data de vencimento?</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>payment/pagcommerce_payment_boleto/cancel_orders</config_path>
+                        <comment>Cancela o pedido 2 dias após o vencimento</comment>
+                    </field>
+
+                    <field id="order_status" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" canRestore="1">
                         <label>Status Novo Pedido</label>
                         <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
                         <config_path>payment/pagcommerce_payment_boleto/order_status</config_path>
                     </field>
-                    <field id="paid_order_status" translate="label" type="select" sortOrder="21" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <field id="paid_order_status" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                         <label>Status Pedido Pago</label>
                         <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                         <config_path>payment/pagcommerce_payment_boleto/paid_order_status</config_path>
                     </field>
-
-                    <field id="comments" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <field id="comments" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Comentário Boleto</label>
                         <config_path>payment/pagcommerce_payment_boleto/comments</config_path>
                     </field>
-                    <field id="days" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
-                        <label>Quantidade Dias Vencimento</label>
-                        <config_path>payment/pagcommerce_payment_boleto/days</config_path>
-                    </field>
+
                     <field id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1">
                         <label>Valor mínimo por Pedido</label>
                         <validate>validate-number validate-zero-or-greater</validate>

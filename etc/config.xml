@@ -23,6 +23,7 @@
                 <qrcode_width>150</qrcode_width>
                 <seller_name>Nome do Vendedor</seller_name>
                 <days>3</days>
+                <cancel_orders>1</cancel_orders>
             </pagcommerce_payment_pix>
             <pagcommerce_payment_boleto>
                 <title>Pagcommerce Boleto</title>
@@ -34,6 +35,7 @@
                 <allowspecific>0</allowspecific>
                 <days>3</days>
                 <seller_name>Nome do Vendedor</seller_name>
+                <cancel_orders>1</cancel_orders>
             </pagcommerce_payment_boleto>
         </payment>
     </default>
