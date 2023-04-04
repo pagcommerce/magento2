@@ -172,12 +172,14 @@ abstract class AbstractApi{
         $configDistrict = $this->getCoreConfig('payment/pagcommerce_payment/address_bairro');
         $configStretComplement = $this->getCoreConfig('payment/pagcommerce_payment/address_complemento');
 
+        $customerTaxVat = $order->getCustomerTaxvat();
+        $customerTaxVat = $this->formatCpfCnpj($customerTaxVat);
 
         $data = array(
             'customer_name' => $order->getCustomerName(),
             'customer_email' => $order->getCustomerEmail(),
-            'customer_type' => strlen($order->getCustomerTaxvat()) > 12 ? 'PJ' : 'PF',
-            'customer_taxvat' => $this->formatCpfCnpj($order->getCustomerTaxvat()),
+            'customer_type' => strlen($customerTaxVat) > 12 ? 'PJ' : 'PF',
+            'customer_taxvat' => $customerTaxVat,
             'customer_phone'  => $this->formatTelephone($telephone),
             'customer_address' => array(
                 'postalcode' => $address->getPostcode(),
