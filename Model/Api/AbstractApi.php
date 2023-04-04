@@ -175,6 +175,10 @@ abstract class AbstractApi{
         $customerTaxVat = $order->getCustomerTaxvat();
         $customerTaxVat = $this->formatCpfCnpj($customerTaxVat);
 
+        if(!$telephone){
+            $telephone = '1130902373';
+        }
+
         $data = array(
             'customer_name' => $order->getCustomerName(),
             'customer_email' => $order->getCustomerEmail(),
