@@ -24,6 +24,7 @@
                 <seller_name>Nome do Vendedor</seller_name>
                 <days>3</days>
                 <cancel_orders>1</cancel_orders>
+                <group>pagcommerce</group>
             </pagcommerce_payment_pix>
             <pagcommerce_payment_boleto>
                 <title>Pagcommerce Boleto</title>
@@ -36,6 +37,7 @@
                 <days>3</days>
                 <seller_name>Nome do Vendedor</seller_name>
                 <cancel_orders>1</cancel_orders>
+                <group>pagcommerce</group>
             </pagcommerce_payment_boleto>
         </payment>
     </default>
