@@ -137,14 +137,11 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
 
             $payment->setAdditionalInformation('captured', true);
             $payment->setAdditionalInformation('captured_date', date('Y-m-d h:i:s'));
-
-
-
             $paidStatus = $this->helperData->getConfig('paid_order_status', $payment->getMethod()) ?: null;
             $order->addCommentToStatusHistory(__('Pagamento confirmato automaticamente'), $paidStatus);
+            $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING);
             $this->orderRepository->save($order);
         }
     }
-
 }
-?>
+
