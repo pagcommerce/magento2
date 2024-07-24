@@ -204,11 +204,20 @@ abstract class AbstractApi{
 
         /** @var \Magento\Sales\Model\Order\Item $orderItem */
         foreach($order->getAllVisibleItems() as $orderItem){
+            if($orderItem->getProductType() == 'configurable'){ continue;}
+
+            if($orderItem->getParentItem()){
+                $price = $orderItem->getParentItem()->getPrice();
+            }else{
+                $price = $orderItem->getPrice();
+            }
+
+            $price =  $this->formatCurrency($price);
             $items[] = array(
                 'id' => $orderItem->getProduct()->getSku(),
                 'name' => $orderItem->getName(),
                 'qty' => (int)$orderItem->getQtyOrdered(),
-                'unit_price' =>  $this->formatCurrency($orderItem->getPrice()),
+                'unit_price' =>  $price,
                 'total' =>  $this->formatCurrency($orderItem->getRowTotal())
             );
         }
