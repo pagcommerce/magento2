@@ -212,14 +212,19 @@ abstract class AbstractApi{
                 $price = $orderItem->getPrice();
             }
 
+            $total = (int)$orderItem->getQtyOrdered() * $price;
+            $total = $this->formatCurrency($total);
+
+
             $price =  $this->formatCurrency($price);
             $items[] = array(
                 'id' => $orderItem->getProduct()->getSku(),
                 'name' => $orderItem->getName(),
                 'qty' => (int)$orderItem->getQtyOrdered(),
                 'unit_price' =>  $price,
-                'total' =>  $this->formatCurrency($orderItem->getRowTotal())
+                'total' => $total
             );
+
         }
 
         $data['order_items'] = $items;
