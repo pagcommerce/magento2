@@ -173,6 +173,11 @@ abstract class AbstractApi{
         $configStretComplement = $this->getCoreConfig('payment/pagcommerce_payment/address_complemento');
 
         $customerTaxVat = $order->getCustomerTaxvat();
+
+        if (is_null($customerTaxVat)) {
+            $customerTaxVat = $address->getVatId();
+        }
+
         $customerTaxVat = $this->formatCpfCnpj($customerTaxVat);
 
         if(!$telephone){
