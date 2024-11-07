@@ -16,10 +16,16 @@ class Boleto extends AbstractApi
         $response = $this->sendRequest('payment-boleto', $data);
         if(isset($response['validation_messages'])){
             foreach($response['validation_messages'] as $key => $value){
-                $message = $key.': ';
-                foreach($value as $error){
-                    $message.= $error;
+
+                if ($key == 'customer_taxvat') {
+                    $message = 'CPF/CNPJ inválido!';
+                }else{
+                    $message = $key.': ';
+                    foreach($value as $error){
+                        $message.= $error;
+                    }
                 }
+
                 $this->addErros($message);
             }
         }else{

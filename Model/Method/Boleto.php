@@ -39,7 +39,7 @@ class Boleto extends \Magento\Payment\Model\Method\AbstractMethod
                 ->setIsTransactionPending(true);
         }else{
             throw new CouldNotSaveException(
-                __('Ocorreu um erro ao gerar o QR Code PIX: '.utf8_encode($api->getErrors()))
+                __('Ocorreu um erro ao gerar o Boleto: '.$api->getErrors())
             );
         }
 

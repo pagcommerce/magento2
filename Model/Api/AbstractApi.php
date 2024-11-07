@@ -117,7 +117,7 @@ abstract class AbstractApi{
 
     /** @return boolean */
     public function hasErros(){
-        return sizeof($this->_erros) > 1;
+        return sizeof($this->_erros) > 0;
     }
 
     /**
