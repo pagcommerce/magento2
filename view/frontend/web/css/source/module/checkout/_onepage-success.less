@@ -119,13 +119,13 @@
         }
     }
 
-    
+
 
     #pix.cctheme-payment-block .cctheme-payment-summary .cctheme-image {
         width: 150px !important;
         height: 150px !important;
     }
-    
+
     #boleto.cctheme-payment-block .cctheme-payment-summary {
         flex: 0 0 400px !important;
 
@@ -190,7 +190,7 @@
             flex-direction: column !important;
             padding-bottom: 10px !important;
         }
-        
+
         > .title {
             display: flex !important;
             align-items: center !important;
@@ -300,3 +300,68 @@
         }
     }
 }
+
+//
+//  Mobile
+//  ___________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+
+    .cctheme-onepagesuccess.remove-qr-code-mobile .cctheme-payment-summary .cctheme-small.summary-text {
+        display: none;
+    }
+
+    .cctheme-onepagesuccess.remove-qr-code-mobile .cctheme-payment-summary .img-wrapper {
+        display: none;
+    }
+
+    .cctheme-onepagesuccess.remove-qr-code-mobile .cctheme-payment-summary .pix-string {
+        display: block !important;
+        margin-bottom: 10px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .cctheme-onepagesuccess.remove-qr-code-mobile .cctheme-small.summary-text {
+        display: none;
+    }
+
+    .cctheme-onepagesuccess.remove-qr-code-mobile .cctheme-payment-block-title {
+        display: none !important;
+    }
+
+    .cctheme-onepagesuccess.remove-qr-code-mobile .cctheme-payment-steps {
+        display: none !important;
+    }
+
+    .cctheme-onepagesuccess.remove-qr-code-mobile .custom-mobile-intro {
+        display: block !important;
+        width: 100%;
+        margin: 0 0 10px 8px;
+    }
+
+    .cctheme-onepagesuccess.remove-qr-code-mobile .custom-mobile-intro p {
+        font-size: 13px;
+    }
+
+    .cctheme-onepagesuccess.remove-qr-code-mobile .custom-mobile-intro .cctheme-payment-block-title-mobile {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .cctheme-onepagesuccess.remove-qr-code-mobile .cctheme-payment-block {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .cctheme-onepagesuccess.remove-qr-code-mobile .custom-mobile-intro .cctheme-payment-block-title-mobile img{
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    .cctheme-onepagesuccess.remove-qr-code-mobile .cctheme-payment-brand {
+        padding-top: 0 !important;
+    }
+
+}
+

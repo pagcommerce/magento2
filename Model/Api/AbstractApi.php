@@ -1,6 +1,8 @@
 <?php
 namespace Pagcommerce\Payment\Model\Api;
 
+use Magento\Framework\App\ObjectManager;
+
 abstract class AbstractApi{
     private $_key = '';
     private $_secret = '';
@@ -172,13 +174,25 @@ abstract class AbstractApi{
         $configDistrict = $this->getCoreConfig('payment/pagcommerce_payment/address_bairro');
         $configStretComplement = $this->getCoreConfig('payment/pagcommerce_payment/address_complemento');
 
-        $customerTaxVat = $order->getCustomerTaxvat();
+
+        $customerType = 'PF';
+        $customerTaxVat = null;
+
+        if (!$order->getCustomerIsGuest()) {
+            $customerId = $order->getCustomerId();
+            $objectManager = ObjectManager::getInstance();
+            $customer = $objectManager->create('Magento\Customer\Model\Customer')->load($customerId);
+            $customerTaxVat = $customer->getTaxvat() ?? null;
+        }
 
         if (is_null($customerTaxVat)) {
             $customerTaxVat = $address->getVatId();
         }
 
-        $customerTaxVat = $this->formatCpfCnpj($customerTaxVat);
+        if (!is_null($customerTaxVat)) {
+            $customerTaxVat = $this->formatCpfCnpj($customerTaxVat);
+            $customerType = strlen($customerTaxVat) > 12 ? 'PF' : 'PJ';
+        }
 
         if(!$telephone){
             $telephone = '1130902373';
@@ -187,7 +201,7 @@ abstract class AbstractApi{
         $data = array(
             'customer_name' => $order->getCustomerName(),
             'customer_email' => $order->getCustomerEmail(),
-            'customer_type' => strlen($customerTaxVat) > 12 ? 'PJ' : 'PF',
+            'customer_type' => $customerType,
             'customer_taxvat' => $customerTaxVat,
             'customer_phone'  => $this->formatTelephone($telephone),
             'customer_address' => array(

@@ -62,11 +62,17 @@
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>payment/pagcommerce_payment_pix/active</config_path>
                     </field>
+                    <field id="show_qrcode_success_page_mobile" translate="label" type="select" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                        <label>Exibir qrCode na página de sucesso do mobile</label>
+                        <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                        <config_path>payment/pagcommerce_payment_pix/show_qrcode_success_page_mobile</config_path>
+                        <comment>Caso essa configuração esteja ativa, a imagem do qrCode é exibida na página de sucesso no mobile. Caso contrário é exibido somente o botão para copiar o código do qrCode.</comment>
+                    </field>
                     <field id="title" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Title</label>
                         <config_path>payment/pagcommerce_payment_pix/title</config_path>
                     </field>
-                    <field id="payment_description" translate="label" type="textarea" sortOrder="31" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <field id="payment_description" translate="label" type="textarea" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                         <label>Descrição da forma de pagamento</label>
                         <comment>Descrição exibida ao selecionar a forma de pagamento no checkout.</comment>
                         <config_path>payment/pagcommerce_payment_pix/payment_description</config_path>
