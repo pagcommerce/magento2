@@ -66,11 +66,16 @@
                         <label>Title</label>
                         <config_path>payment/pagcommerce_payment_pix/title</config_path>
                     </field>
-                    <field id="days" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <field id="payment_description" translate="label" type="textarea" sortOrder="31" showInDefault="1" showInWebsite="0" showInStore="0">
+                        <label>Descrição da forma de pagamento</label>
+                        <comment>Descrição exibida ao selecionar a forma de pagamento no checkout.</comment>
+                        <config_path>payment/pagcommerce_payment_pix/payment_description</config_path>
+                    </field>
+                    <field id="days" translate="label" type="text" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Qtd dias vencimento</label>
                         <config_path>payment/pagcommerce_payment_pix/days</config_path>
                     </field>
-                    <field id="cancel_orders" translate="label" type="select" sortOrder="32" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <field id="cancel_orders" translate="label" type="select" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Cancelar pedidos após data de vencimento?</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>payment/pagcommerce_payment_pix/cancel_orders</config_path>
@@ -113,11 +118,16 @@
                         <label>Title</label>
                         <config_path>payment/pagcommerce_payment_boleto/title</config_path>
                     </field>
-                    <field id="days" translate="label" type="text" sortOrder="31" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <field id="payment_description" translate="label" type="textarea" sortOrder="31" showInDefault="1" showInWebsite="0" showInStore="0">
+                        <label>Descrição da forma de pagamento</label>
+                        <comment>Descrição exibida ao selecionar a forma de pagamento no checkout.</comment>
+                        <config_path>payment/pagcommerce_payment_boleto/payment_description</config_path>
+                    </field>
+                    <field id="days" translate="label" type="text" sortOrder="34" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Quantidade Dias Vencimento</label>
                         <config_path>payment/pagcommerce_payment_boleto/days</config_path>
                     </field>
-                    <field id="cancel_orders" translate="label" type="select" sortOrder="32" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <field id="cancel_orders" translate="label" type="select" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="0">
                         <label>Cancelar pedidos após data de vencimento?</label>
                         <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                         <config_path>payment/pagcommerce_payment_boleto/cancel_orders</config_path>

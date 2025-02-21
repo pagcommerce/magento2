@@ -44,6 +44,9 @@ define([
         validate: function() {
             var $form = $('#' + this.getCode() + '-form');
             return $form.validation() && $form.validation('isValid');
-        }
+        },
+        getPaymentDescription: function() {
+            return window.checkoutConfig.pagcommercePaymentBoleto.paymentDescription;
+        },
     });
 });
