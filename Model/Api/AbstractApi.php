@@ -194,6 +194,7 @@ abstract class AbstractApi{
             $customerType = strlen($customerTaxVat) > 12 ? 'PJ' : 'PF';
         }
 
+
         if(!$telephone){
             $telephone = '1130902373';
         }
