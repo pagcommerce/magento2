@@ -29,11 +29,18 @@ class Pix extends \Magento\Payment\Model\Method\AbstractMethod
 
         $pixResponse = $api->getPixResponse($order);
         if($pixResponse){
-            $order->getPayment()->setAdditionalInformation($pixResponse['payment_data']);
-            $order->getPayment()->setTransactionId($pixResponse['id'] . '-authorization')
-                ->setTxnType(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_VOID)
-                ->setIsTransactionClosed(false)
-                ->setIsTransactionPending(true);
+
+            if (isset($pixResponse['payment_data'])) {
+                $order->getPayment()->setAdditionalInformation($pixResponse['payment_data']);
+                $order->getPayment()->setTransactionId($pixResponse['id'] . '-authorization')
+                    ->setTxnType(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_VOID)
+                    ->setIsTransactionClosed(false)
+                    ->setIsTransactionPending(true);
+            } else {
+                $message = $pixResponse['detail'] ?? 'Ocorreu um erro ao gerar o QR Code PIX: '.$api->getErrors();
+                throw new CouldNotSaveException(__($message));
+            }
+
         }else{
             throw new CouldNotSaveException(
                 __('Ocorreu um erro ao gerar o QR Code PIX: '.$api->getErrors())
