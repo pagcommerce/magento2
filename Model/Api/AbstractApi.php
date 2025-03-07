@@ -191,7 +191,7 @@ abstract class AbstractApi{
 
         if (!is_null($customerTaxVat)) {
             $customerTaxVat = $this->formatCpfCnpj($customerTaxVat);
-            $customerType = strlen($customerTaxVat) > 12 ? 'PF' : 'PJ';
+            $customerType = strlen($customerTaxVat) > 12 ? 'PJ' : 'PF';
         }
 
         if(!$telephone){
