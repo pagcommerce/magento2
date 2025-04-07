@@ -27,7 +27,7 @@
             <argument name="code" xsi:type="const">\Pagcommerce\Payment\Model\Ui\ConfigProvider::CODE</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="infoBlockType" xsi:type="string">Pagcommerce\Payment\Block\Info\Cc</argument>
-            <argument name="valueHandlerPool" xsi:type="object">PagcommercePaymentValueHandlerPool</argument>
+<!--            <argument name="valueHandlerPool" xsi:type="object">PagcommercePaymentValueHandlerPool</argument>-->
             <argument name="commandPool" xsi:type="object">PagcommercePaymentCommandPool</argument>
         </arguments>
     </virtualType>

@@ -22,7 +22,8 @@ define(
                 creditCardSsStartMonth: '',
                 creditCardSsStartYear: '',
                 creditCardVerificationNumber: '',
-                creditCardInstallments: ''
+                creditCardInstallments: '',
+                taxvat: '',
             },
 
             initObservable: function () {
@@ -36,7 +37,8 @@ define(
                         'creditCardVerificationNumber',
                         'creditCardSsStartMonth',
                         'creditCardSsStartYear',
-                        'creditCardInstallments'
+                        'creditCardInstallments',
+                        'taxvat'
                     ]);
                 return this;
             },
@@ -66,6 +68,9 @@ define(
 
             getCcMonths: function() {
                 return window.checkoutConfig.payment.pagcommerce_payment_cc.months;
+            },
+            getTaxVat: function() {
+                return window.checkoutConfig.payment.pagcommerce_payment_cc.taxvat;
             },
             getCcYears: function() {
                 return window.checkoutConfig.payment.pagcommerce_payment_cc.years;

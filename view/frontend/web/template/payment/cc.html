@@ -129,6 +129,7 @@
                                     title: $t('CPF/CNPJ'),
                                     'data-container': getCode() + '-cc-cpf',
                                     'data-validate': JSON.stringify({'required': true})},
+                                    value: getTaxVat()
                               enable: isActive($parents)
                               "/>
                     </div>
@@ -150,7 +151,7 @@
                                            options: getInstallmentsValues(),
                                            optionsValue: 'value',
                                            optionsText: 'parcel',
-                                           optionsCaption: $t('Installment'),
+                                           optionsCaption: $t('Select'),
                                            value: creditCardInstallments">
                                     </select>
                                 </div>
