@@ -7,11 +7,14 @@
 define(
     [
         'uiComponent',
-        'Magento_Checkout/js/model/payment/renderer-list'
+        'Magento_Checkout/js/model/payment/renderer-list',
+        'jquery',
+        'inputmask'
     ],
     function (
         Component,
         rendererList,
+        $
     ) {
         'use strict';
         rendererList.push(
@@ -20,7 +23,22 @@ define(
                 component: 'Pagcommerce_Payment/js/view/payment/method-renderer/cc'
             }
         );
-        /** Add view logic here if needed */
-        return Component.extend({});
+
+        return Component.extend({
+            cpfCnpjMask: function () {
+            },
+
+            initialize: function () {
+                this._super();
+
+                const checkCpfCnpjLength = setInterval(() => {
+                    if ($('input[name="payment[cc_cpf]"]').length) {
+                        Inputmask(['999.999.999-99', '99.999.999/9999-99']).mask('input[name="payment[cc_cpf]"]');
+
+                        clearInterval(checkCpfCnpjLength);
+                    }
+                }, 100);
+            }
+        });
     }
 );
