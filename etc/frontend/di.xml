@@ -5,4 +5,30 @@
         <plugin name="custom-payment-description-config" type="Pagcommerce\Payment\Plugin\Model\ConfigProviderPlugin" />
     </type>
 
+
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="pagcommerce_payment_config_provider" xsi:type="object">Pagcommerce\Payment\Model\Ui\ConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Pagcommerce\Payment\Block\Info\Cc">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item xsi:type="string" name="is_secure_mode">1</item>
+            </argument>
+        </arguments>
+    </type>
+
+
+    <type name="Pagcommerce\Payment\Model\Ui\ConfigProvider">
+        <arguments>
+            <argument name="ccConfig" xsi:type="object">Magento\Payment\Model\CcConfig</argument>
+            <argument name="helper" xsi:type="object">Pagcommerce\Payment\Helper\Data</argument>
+        </arguments>
+    </type>
+
+
 </config>

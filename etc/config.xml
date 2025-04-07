@@ -85,6 +85,37 @@
                 <cancel_orders>1</cancel_orders>
                 <group>pagcommerce</group>
             </pagcommerce_payment_boleto>
+
+            <pagcommerce_payment_cc>
+                <debug>1</debug>
+                <title>Cartão de crédito</title>
+                <active>0</active>
+                <model>PagcommercePaymentFacade</model>
+                <order_status>pending</order_status>
+                <paid_order_status>processing</paid_order_status>
+                <payment_action>authorize</payment_action>
+                <allowspecific>0</allowspecific>
+                <group>pagcommerce</group>
+                <is_gateway>1</is_gateway>
+                <can_use_checkout>1</can_use_checkout>
+                <can_use_internal>0</can_use_internal>
+                <can_refund_partial_per_invoice>0</can_refund_partial_per_invoice>
+                <can_refund>1</can_refund>
+                <can_cancel>1</can_cancel>
+                <can_void>1</can_void>
+                <can_edit>0</can_edit>
+                <cctypes>AE,VI,MC,DI,JCB,CUP,DN,MI</cctypes>
+                <useccv>1</useccv>
+
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_void>1</can_void>
+                <sort_order>1</sort_order>
+
+                <label_install>com juros (total %s)</label_install>
+                <label_nofee>sem juros</label_nofee>
+                <fee_type>total</fee_type>
+            </pagcommerce_payment_cc>
         </payment>
     </default>
 </config>

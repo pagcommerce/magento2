@@ -99,9 +99,8 @@ abstract class AbstractApi{
 
     /** @return string */
     private function getApiUrl(){
-        return $this->getEnvironment() == \Pagcommerce\Payment\Model\Config\Source\Environment::TEST ? $this->getCoreConfig('payment/pagcommerce_payment/sandbox_api_url').'/' : 'https://api.pagcommerce.com.br/';
+        return $this->getEnvironment() == \Pagcommerce\Payment\Model\Config\Source\Environment::TEST ? 'https://api-sandbox.pagcommerce.com.br/' : 'https://api.pagcommerce.com.br/';
     }
-
 
     /** @return $this */
     protected function addErros($errorMessage){
