@@ -37,7 +37,8 @@
                                     title: $t('Credit Card Number'),
                                     'data-container': getCode() + '-cc-number',
                                     'data-validate': JSON.stringify({'required-number':true, 'required': true})},
-                              enable: isActive($parents)
+                                    enable: isActive($parents),
+                                    value: creditCardNumber
                               "/>
                     </div>
                 </div>
@@ -112,7 +113,8 @@
                                     title: $t('Owner Name'),
                                     'data-container': getCode() + '-cc-name',
                                     'data-validate': JSON.stringify({'required': true})},
-                              enable: isActive($parents)
+                                     value: creditCardOwner,
+                                     enable: isActive($parents)
                               "/>
                     </div>
                 </div>
@@ -129,7 +131,7 @@
                                     title: $t('CPF/CNPJ'),
                                     'data-container': getCode() + '-cc-cpf',
                                     'data-validate': JSON.stringify({'required': true})},
-                                    value: getTaxVat()
+                                    value: taxvat
                               enable: isActive($parents)
                               "/>
                     </div>

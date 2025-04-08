@@ -2,16 +2,26 @@
 namespace Pagcommerce\Payment\Model\Method;
 use Magento\Payment\Model\Method;
 use Magento\Framework\Exception\CouldNotSaveException;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Invoice;
+use Magento\Sales\Model\Order\InvoiceRepository;
+
 
 class Cc extends \Magento\Payment\Model\Method\AbstractMethod
 {
+
+    protected $invoiceRepository;
+    protected $orderRepository;
+    protected $helperData;
 
     protected $_code = 'pagcommerce_payment_cc';
 
     /**
      * @var string
      */
-    protected $_infoBlockType = \Pagcommerce\Payment\Block\Info\Pix::class;
+    protected $_infoBlockType = \Pagcommerce\Payment\Block\Info\Cc::class;
+
+
 
     /** @return \Magento\Framework\App\ObjectManager */
     private function getObjectManager(){
@@ -20,50 +30,83 @@ class Cc extends \Magento\Payment\Model\Method\AbstractMethod
     }
 
     public function initialize($paymentAction, $stateObject){
-
         /** @var \Magento\Sales\Model\Order $order */
         $order   = $this->getInfoInstance()->getOrder();
 
-        /** @var \Pagcommerce\Payment\Model\Api\Pix $api */
-        $api =  $this->getObjectManager()->create(\Pagcommerce\Payment\Model\Api\Pix::class);
+        /** @var \Pagcommerce\Payment\Model\Api\Cc $api */
+        $api =  $this->getObjectManager()->create(\Pagcommerce\Payment\Model\Api\Cc::class);
 
-        $pixResponse = $api->getPixResponse($order);
-        if($pixResponse){
+        $response = $api->sendOrder($order, $this->getInfoInstance()->getAdditionalInformation());
+        if($response  && isset($response['id'])){
+            $this->helperData = $this->getObjectManager()->create(\Pagcommerce\Payment\Helper\Data::class);
 
-            if (isset($pixResponse['payment_data'])) {
-                $order->getPayment()->setAdditionalInformation($pixResponse['payment_data']);
-                $order->getPayment()->setTransactionId($pixResponse['id'] . '-authorization')
-                    ->setTxnType(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_VOID)
-                    ->setIsTransactionClosed(false)
-                    ->setIsTransactionPending(true);
-            } else {
-                $message = $pixResponse['detail'] ?? 'Ocorreu um erro ao gerar o QR Code PIX: '.$api->getErrors();
-                throw new CouldNotSaveException(__($message));
+            $payment =  $order->getPayment();
+            $payment->setAdditionalInformation('transaction_id', $response['id']);
+
+            $additionalInformation = $this->getInfoInstance()->getAdditionalInformation();
+            /** @var \Pagcommerce\Payment\Helper\Data $helper */
+            $helper = $this->getObjectManager()->create(\Pagcommerce\Payment\Helper\Data::class);
+            $installments = $helper->getInterestsByTotal($order->getGrandTotal());
+            $currentInstallment = $installments[$additionalInformation['installment']];
+
+            $paymentInformation = array();
+            $paymentInformation['pagcommerce_transaction_id'] = $response['id'];
+            $paymentInformation['installment'] = $currentInstallment;
+            $paymentInformation['payment_data'] = $response['payment_data'];
+            $payment->setAdditionalInformation($paymentInformation);
+
+            switch ($response['status']){
+                case 'denied':
+                    throw new CouldNotSaveException(__('Pagamento não aprovado. Por favor tente novamente com outro cartão'));
+                case 'denied_risk':
+                    throw new CouldNotSaveException(__('Pagamento não aprovado. Por favor tente novamente com outro cartão ou utilize outro dispositivo'));
+                    break;
+                case 'approved':
+
+                    $paidStatus = $this->helperData->getConfig('paid_order_status', $payment->getMethod()) ?: null;
+                    $stateObject->setState(\Magento\Sales\Model\Order::STATE_PROCESSING);
+                    $stateObject->setStatus($paidStatus);
+                    $stateObject->setIsNotified(true);
+
+                    $payment
+                        ->setIsTransactionClosed(true)
+                        ->registerCaptureNotification(
+                            $order->getGrandTotal(),
+                            true
+                        );
+                    $order->save();
+                    return $this;
+                    break;
+                case 'in_analysis':
+                    $order->getPayment()->setTransactionId($response['id'] . '-analysis')
+                        ->setTxnType(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_VOID)
+                        ->setIsTransactionClosed(false)
+                        ->setIsTransactionPending(true);
+                    break;
             }
-
         }else{
             throw new CouldNotSaveException(
-                __('Ocorreu um erro ao gerar o QR Code PIX: '.$api->getErrors())
+                __('Ocorreu um erro ao processar seu pagamento: '.$api->getErrors())
             );
         }
 
     }
 
+    public function isInitializeNeeded(){
+        return true;
+    }
+
     public function assignData(\Magento\Framework\DataObject $data)
     {
         parent::assignData($data);
-        $infoInstance = $this->getInfoInstance();
         $currentData = $data->getAdditionalData();
 
-//        $info = $this->getInfoInstance();
-//        $info->setAdditionalInformation('method', $infoForm['method']);
+        $info = $this->getInfoInstance();
+        $info->setAdditionalInformation($currentData);
 
         return $this;
     }
 
-    public function isInitializeNeeded(){
-        return true;
-    }
 
 
 }

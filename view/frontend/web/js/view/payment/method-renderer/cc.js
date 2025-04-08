@@ -8,8 +8,13 @@ define(
     [
         'Magento_Checkout/js/view/payment/default',
         'jquery',
+        'Magento_Payment/js/model/credit-card-validation/credit-card-data',
+        'Magento_Payment/js/model/credit-card-validation/credit-card-number-validator',
+        'mage/translate',
+        'Magento_Checkout/js/action/select-payment-method',
+        'Magento_Checkout/js/checkout-data'
     ],
-    function (Component, $) {
+    function (Component, $, creditCardData, cardNumberValidator, $t, selectPaymentMethodAction, checkoutData) {
         'use strict';
 
         return Component.extend({
@@ -24,48 +29,49 @@ define(
                 creditCardVerificationNumber: '',
                 creditCardInstallments: '',
                 taxvat: '',
+                creditCardOwner: ''
             },
-
+            initialize: function () {
+                this._super();
+                this.taxvat(this.getTaxVat());
+            },
             initObservable: function () {
-
                 this._super()
                     .observe([
-                        'creditCardType',
                         'creditCardExpYear',
                         'creditCardExpMonth',
                         'creditCardNumber',
                         'creditCardVerificationNumber',
-                        'creditCardSsStartMonth',
-                        'creditCardSsStartYear',
                         'creditCardInstallments',
-                        'taxvat'
+                        'taxvat',
+                        'creditCardOwner'
                     ]);
                 return this;
             },
-
+            selectPaymentMethod: function () {
+                selectPaymentMethodAction(this.getData());
+                checkoutData.setSelectedPaymentMethod(this.item.method);
+                return true;
+            },
             getCode: function() {
                 return 'pagcommerce_payment_cc';
             },
 
             getData: function() {
-                return {
-                    'method': this.item.method,
+                var data = {
+                    'method': this.getCode(),
                     'additional_data': {
-
+                        'customertaxvat': this.taxvat(),
+                        'cc_number': this.creditCardNumber(),
+                        'cc_expiration_year': this.creditCardExpYear(),
+                        'cc_expiration_month': this.creditCardExpMonth(),
+                        'cc_cvv': this.creditCardVerificationNumber(),
+                        'cc_owner_name': this.creditCardOwner(),
+                        'installment': this.creditCardInstallments()
                     }
                 };
+                return data;
             },
-
-            getTransactionResults: function() {
-                return _.map(window.checkoutConfig.payment.sample_gateway.transactionResults, function(value, key) {
-                    return {
-                        'value': key,
-                        'transaction_result': value
-                    }
-                });
-            },
-
-
             getCcMonths: function() {
                 return window.checkoutConfig.payment.pagcommerce_payment_cc.months;
             },
@@ -112,7 +118,6 @@ define(
                 var $form = $('#' + this.getCode() + '-form');
                 return $form.validation() && $form.validation('isValid');
             }
-
         });
     }
 );
