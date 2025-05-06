@@ -20,7 +20,6 @@ class Pix extends \Magento\Payment\Model\Method\AbstractMethod
     }
 
     public function initialize($paymentAction, $stateObject){
-
         /** @var \Magento\Sales\Model\Order $order */
         $order   = $this->getInfoInstance()->getOrder();
 

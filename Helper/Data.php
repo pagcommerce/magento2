@@ -66,7 +66,7 @@ class Data extends \Magento\Payment\Helper\Data
                     if($juros > 0){
                         //tem juros
                         if($feeType == \Pagcommerce\Payment\Model\Config\Source\Fee\Type::TYPE_PARCEL){
-                            $jurosByParcel = ($orderTotal * ($juros/100)) * $value['fees'];
+                            $jurosByParcel = ($orderTotal * ($juros/100)) * $key;
                         }else{
                             $jurosByParcel = ($orderTotal * ($juros/100));
                         }

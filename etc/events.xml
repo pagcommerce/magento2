@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_place_after">
+        <observer name="pagcommerce_payment_method_cc_after_place_order"
+                  instance="Pagcommerce\Payment\Observer\SalesOrderPlaceAfter"/>
+    </event>
+</config>

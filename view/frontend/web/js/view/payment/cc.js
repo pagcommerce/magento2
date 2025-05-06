@@ -25,16 +25,11 @@ define(
         );
 
         return Component.extend({
-            cpfCnpjMask: function () {
-            },
-
             initialize: function () {
                 this._super();
-
                 const checkCpfCnpjLength = setInterval(() => {
                     if ($('input[name="payment[cc_cpf]"]').length) {
                         Inputmask(['999.999.999-99', '99.999.999/9999-99']).mask('input[name="payment[cc_cpf]"]');
-
                         clearInterval(checkCpfCnpjLength);
                     }
                 }, 100);

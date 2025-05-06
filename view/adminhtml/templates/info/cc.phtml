@@ -1,0 +1,21 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+/**
+ * @var $block \Pagcommerce\Payment\Block\Info\Cc
+ */
+$order = $block->getInfo()->getOrder();
+$data = $order->getPayment()->getAdditionalInformation();
+
+$domain = $block->getPagcommerceUrlDomain();
+$creditCardBrand = $block->getCreditCardBrandName($data['payment_data']['card_brand']);
+
+?>
+<p>Pagcommerce - Cartão de crédito</p>
+<p>Transação Pagcommerce: <a href="<?= $domain ?>/pg_transactions/view/id/<?= $data['pagcommerce_transaction_id']; ?>">#<?= $data['pagcommerce_transaction_id'] ?></a></p>
+<p>Cartão <?= $creditCardBrand ? $creditCardBrand.' ' : '' ?>de final <?= $data['payment_data']['first4_digits'] ?> </p>
+<p><?= $data['installment']['label'] ?> - TOTAL: <?= $data['installment']['total_with_interest'] ?></p>
+

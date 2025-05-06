@@ -1,6 +1,10 @@
 <?php
 
-namespace Pagcommerce\Payment\Controller\Standard;
+namespace Pagcommerce\Payment\Observer;
+
+use Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Event\Observer as EventObserver;
+use Magento\Framework\App\ObjectManager;
 
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\CsrfAwareActionInterface;
@@ -15,7 +19,7 @@ use Magento\Sales\Model\OrderRepository;
 use Magento\Framework\App\Request\InvalidRequestException;
 
 
-class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
+class SalesOrderPlaceAfter implements ObserverInterface
 {
 
     /**
@@ -43,14 +47,7 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
     /** @var OrderRepository  */
     protected $orderRepository;
 
-
-
-    /**
-     * @param RequestInterface $request
-     */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        RequestInterface $request,
         OrderFactory $factory,
         TransactionApi $transactionApi,
         JsonFactory $resultJsonFactory,
@@ -59,7 +56,6 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
         OrderRepository $orderRepository
     )
     {
-        $this->_request = $request;
         $this->_orderFactory = $factory;
         $this->transactionApi = $transactionApi;
         $this->resultJsonFactory = $resultJsonFactory;
@@ -68,65 +64,42 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
         $this->orderRepository = $orderRepository;
     }
 
-    public function execute()
-    {
-        $data = $this->_request->getParams();
 
-        if(!$data){
-            $data = file_get_contents('php://input');
-            if($data){
-                $data = json_decode($data, true);
-            }
-        }
-        if(isset($data['id']) && isset($data['transaction_type']) && isset($data['reference_id'])){
-            $order = $this->_orderFactory->create()->loadByIncrementId($data['reference_id']);
-            if($order && $order->getId()){
-                if($data['status'] == 'approved'){
-                    $transaction = $this->transactionApi->getTransaction($data['id']);
-                    if(is_array($transaction)){
-                        if(isset($transaction['id']) && $transaction['id'] == $data['id']){
-                            if($transaction['status'] == 'approved'){
-                                $this->confirmPayment($order, $data);
-                            }
-                        }
-                    }
-                }else{
-                    return $this->createResult(200, [
-                        'message' => 'Pedido não aprovado'
-                    ]);
-                }
-            }else{
-                return $this->createResult(200, [
-                    'message' => 'Pedido não encontrado'
-                ]);
-            }
+    /**
+     * @param EventObserver $observer
+     * @return void
+     */
+    public function execute(EventObserver $observer)
+    {
+
+        return $this;
+        if (!$this->moduleIsEnable()) {
+            return $this;
         }
 
-        return $this->createResult(200, [
-            'message' => 'Notificação finalizada'
-        ]);
+        $event = $observer->getEvent();
+        $order = $event->getOrder();
+        $payment = $order->getPayment();
+
+        if ($payment->getMethod() != 'pagcommerce_payment_cc') {
+            return $this;
+        }
+
+        if ( $order->canInvoice() && $order->getState() == \Magento\Sales\Model\Order::STATE_PROCESSING) {
+            $additionalInformation = $order->getPayment()->getAdditionalInformation();
+            $additionalInformation['id'] = $additionalInformation['pagcommerce_transaction_id'];
+            $this->confirmPayment($order, $additionalInformation);
+        }
+        return $this;
     }
 
-    public function createResult($statusCode, $data)
+    public function moduleIsEnable()
     {
-        /** @var JsonFactory $resultPage */
-        $resultPage = $this->resultJsonFactory->create();
-        $resultPage->setHttpResponseCode($statusCode);
-        $resultPage->setData($data);
-        return $resultPage;
+        $objectManager = ObjectManager::getInstance();
+        /** @var \Pagcommerce\Payment\Helper\Data $helper */
+        $helper = $objectManager->get(\Pagcommerce\Payment\Helper\Data::class);
+        return (bool)$helper->getConfig('active', 'pagcommerce_payment_cc');
     }
-
-
-    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
-    {
-        return null;
-    }
-
-    public function validateForCsrf(RequestInterface $request): ?bool
-    {
-        return true;
-    }
-
 
     private function confirmPayment(?\Magento\Sales\Model\Order $order = null, $paymentData = array())
     {
@@ -135,9 +108,11 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
 
             /** @var \Magento\Sales\Model\Order\Invoice $invoice */
             $invoice = $order->prepareInvoice();
+            $invoice->setOrder($order);
             $invoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);
             $invoice->register();
             $invoice->pay();
+
             !$invoice->getTransactionId() ? $invoice->setTransactionId($paymentData['id']) : null;
             $this->invoiceRepository->save($invoice);
 
@@ -149,5 +124,34 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
             $this->orderRepository->save($order);
         }
     }
-}
 
+
+    public function createInvoice($order)
+    {
+        $payment = $order->getPayment();
+        $payment
+            ->setIsTransactionClosed(true)
+            ->registerCaptureNotification(
+                $order->getGrandTotal(),
+                true
+            );
+        $order->save();
+
+
+        $invoice = $payment->getCreatedInvoice();
+        if ($invoice && !$order->getEmailSent()) {
+            $order->addStatusHistoryComment(
+                'PGM - ' .
+                __(
+                    'Notified customer about invoice #%1.',
+                    $invoice->getIncrementId()
+                )
+            )->setIsCustomerNotified(true)
+                ->save();
+        }
+
+        return true;
+    }
+
+
+}

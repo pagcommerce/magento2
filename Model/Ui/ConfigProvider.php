@@ -49,6 +49,13 @@ final class ConfigProvider implements ConfigProviderInterface
 
         $installments = $this->_helper->getInterestsByTotal($quote->getGrandTotal());
 
+        /** @var \Magento\Customer\Model\Session $customerSession */
+        $customerSession = $objectManager->get(\Magento\Customer\Model\Session::class);
+        $taxVat = '';
+        if($customerSession->isLoggedIn()){
+            $taxVat = $customerSession->getCustomer()->getTaxvat();
+        }
+
         $returnData  = [
             'payment' => [
                 self::CODE => [
@@ -56,6 +63,7 @@ final class ConfigProvider implements ConfigProviderInterface
                     'months' => $this->ccConfig->getCcMonths(),
                     'years' => $this->ccConfig->getCcYears(),
                     'hasVerification' => $this->ccConfig->hasVerification(),
+                    'taxvat' => $taxVat,
 //                    'is_saved_card' => false,
 //                    'enabled_saved_cards' => false,
 //                    'tds_active' => false,
