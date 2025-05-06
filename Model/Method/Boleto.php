@@ -33,14 +33,14 @@ class Boleto extends \Magento\Payment\Model\Method\AbstractMethod
         $boletoResponse = $api->getBoletoResponse($order);
         if($boletoResponse){
 
-            if (isset($pixResponse['payment_data'])) {
-                $order->getPayment()->setAdditionalInformation($pixResponse['payment_data']);
-                $order->getPayment()->setTransactionId($pixResponse['id'] . '-authorization')
+            if (isset($boletoResponse['payment_data'])) {
+                $order->getPayment()->setAdditionalInformation($boletoResponse['payment_data']);
+                $order->getPayment()->setTransactionId($boletoResponse['id'] . '-authorization')
                     ->setTxnType(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_VOID)
                     ->setIsTransactionClosed(false)
                     ->setIsTransactionPending(true);
             } else {
-                $message = $pixResponse['detail'] ?? 'Ocorreu um erro ao gerar o Boleto: '.$api->getErrors();
+                $message = $boletoResponse['detail'] ?? 'Ocorreu um erro ao gerar o Boleto: '.$api->getErrors();
                 throw new CouldNotSaveException(__($message));
             }
 
