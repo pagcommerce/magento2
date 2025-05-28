@@ -125,7 +125,7 @@ class SalesOrderPlaceAfter implements ObserverInterface
         }
     }
 
-    
+
     public function createInvoice($order)
     {
         $payment = $order->getPayment();

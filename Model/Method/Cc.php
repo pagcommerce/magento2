@@ -22,6 +22,14 @@ class Cc extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_infoBlockType = \Pagcommerce\Payment\Block\Info\Cc::class;
 
 
+    protected $_isGateway           = true;
+    protected $_canRefund           = true;
+    protected $_canCapture          = true;
+
+
+    protected $_canCapturePartial           = false;
+    protected $_canRefundInvoicePartial     = false;
+
 
     /** @return \Magento\Framework\App\ObjectManager */
     private function getObjectManager(){
@@ -69,7 +77,9 @@ class Cc extends \Magento\Payment\Model\Method\AbstractMethod
                     $stateObject->setIsNotified(true);
 
                     $payment
-                        ->setIsTransactionClosed(true)
+                        ->setIsTransactionClosed(false)
+                        ->setShouldCloseParentTransaction(false)
+                        ->setTransactionId($response['id'])
                         ->registerCaptureNotification(
                             $order->getGrandTotal(),
                             true
@@ -111,36 +121,78 @@ class Cc extends \Magento\Payment\Model\Method\AbstractMethod
 
     public function refund(\Magento\Payment\Model\InfoInterface $payment, $amount)
     {
-        throw new \Magento\Framework\Exception\LocalizedException(
-            __('We can\'t issue a refund transaction because there is no capture transaction.')
-        );
+        $pagcommerceTransactionId = $payment->getParentTransactionId();
+        if (isset($pagcommerceTransactionId)) {
+            /** @var \Pagcommerce\Payment\Model\Api\Pix $api */
+            $api = $this->getObjectManager()->create(\Pagcommerce\Payment\Model\Api\Pix::class);
 
-        if($this->canRefund()){
+            $transaction = $api->sendRequest('payment-transaction/' . $pagcommerceTransactionId, array(), 'GET');
+            if ($transaction && isset($transaction['id'])) {
+                if ($this->getStatus($transaction['status']) == 'approved' || $transaction['status'] == 'in_analysis') {
+                    if ($transaction['transaction_type'] == 'cc') {
+                        $endPoint = $transaction['status'] == 'approved' ? 'payment-refund' : 'payment-cancel';
+                        $response = $api->sendRequest($endPoint, array('transaction_id' => $transaction['id']));
 
-            $order = $payment->getOrder();
-            /** @var \Pagcommerce\Payment\Model\Api\Cc $apiCc */
-            $apiCc = $this->getObjectManager()->create(\Pagcommerce\Payment\Model\Api\Cc::class);
-            try{
-                $paymentData = $payment->getAdditionalInformation();
-                $pagcommerceTransactionId = $paymentData['pagcommerce_transaction_id'];
-                try{
-                    $response = $apiCc->refundOrder($pagcommerceTransactionId);
-                    if($response){
-                        /** @var Mage_Admin_Model_Session $session */
-                        $session = Mage::getModel('admin/session');
-                        /** @var Mage_Admin_Model_User $user */
-                        $user = $session->getUser();
-                        $order->addStatusHistoryComment('Transação estornada pelo usuário '.$user->getName().' - '.$user->getEmail());
+                        if($endPoint == 'payment-cancel'){
+                            if ($response && isset($response['canceled'])) {
+                                if ($response['canceled']) {
+                                    return $this;
+                                } else {
+                                    throw new \Magento\Framework\Exception\LocalizedException(
+                                        __('Pagcommerce: A transação não pode ser cancelada.')
+                                    );
+                                }
+                            }else{
+                                throw new \Magento\Framework\Exception\LocalizedException(
+                                    __('Pagcommerce: Ocorreu um erro ao cancelar a autorização de pagamento. Por favor tente novamente.')
+                                );
+                            }
+                        }else{
+                            if ($response && isset($response['refunded'])) {
+                                if ($response['refunded']) {
+                                    return $this;
+                                } else {
+                                    throw new \Magento\Framework\Exception\LocalizedException(
+                                        __('Pagcommerce: A transação não pode ser estornada.')
+                                    );
+                                }
+                            }else{
+                                throw new \Magento\Framework\Exception\LocalizedException(
+                                    __('Pagcommerce: Ocorreu um erro ao estornar o pagamento. Por favor tente novamente.')
+                                );
+                            }
+                        }
+
+                    } else {
+                        throw new \Magento\Framework\Exception\LocalizedException(
+                            __('Pagcommerce: Transação não é cartão de crédito.')
+                        );
                     }
-                    return $this;
-                }catch (\Exception $e){
-                    throw new \Exception($e->getMessage());
+                } else {
+                    throw new \Magento\Framework\Exception\LocalizedException(
+                        __('Pagcommerce: Transação não foi aprovada/recebida')
+                    );
                 }
-
-            }catch (\Exception $e){
-                throw new \Exception($e->getMessage());
+            } else {
+                throw new \Magento\Framework\Exception\LocalizedException(
+                    __('Pagcommerce: Transação não encontrada')
+                );
             }
+        } else {
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __('Não é possível estornar o Pix. ID transação Pagcommerce inválido')
+            );
         }
+
+    }
+
+    /**
+     * @param $status
+     * @return mixed
+     */
+    public function getStatus($status)
+    {
+        return $status;
     }
 
 }

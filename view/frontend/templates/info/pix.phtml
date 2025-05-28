@@ -8,15 +8,27 @@
  * @var $block \Pagcommerce\Payment\Block\Info\Pix
  */
 
+/** @var \Magento\Sales\Model\Order\Interceptor $order */
 $order = $block->getInfo()->getOrder();
 
+$data = $this->getInfo()->getAdditionalInformation();
+
+if(isset($data['pix_qrcode']) && $order->getState() == \Magento\Sales\Model\Order::STATE_NEW):
 ?>
-<dl class="payment-method pagcommerce_payment_boleto">
-    <dt class="title"><?= $block->escapeHtml($block->getMethod()->getTitle()) ?></dt>
-    <dd class="content">
-        <?php $data = $this->getInfo()->getAdditionalInformation(); ?>
-        <?php if( $order->getState() == \Magento\Sales\Model\Order::STATE_NEW && isset($data['pix_qrcode'])): ?>
-            <img src="<?php echo $data['pix_qrcode']; ?>" alt="Escaneie esse QR Code para realizar o pagamento" class="cctheme-image" width="150" height="150">
-        <?php endif; ?>
-    </dd>
-</dl>
+    <?php
+        /** @var \Pagcommerce\Payment\Helper\Image $helperImage */
+        $helperImage = $this->helper(\Pagcommerce\Payment\Helper\Image::class);
+        $imgJpg = $helperImage->convertBase64ToImage($data['pix_qrcode'], $order);
+
+    ?>
+
+    <dl class="payment-method pagcommerce_payment_boleto">
+        <dt class="title"><?= $block->escapeHtml($block->getMethod()->getTitle()) ?></dt>
+        <dd class="content">
+            <?php $data = $this->getInfo()->getAdditionalInformation(); ?>
+            <?php if( $order->getState() == \Magento\Sales\Model\Order::STATE_NEW && isset($data['pix_qrcode'])): ?>
+                <img src="<?php echo $imgJpg; ?>" alt="Escaneie esse QR Code para realizar o pagamento" class="cctheme-image" width="150" height="150">
+            <?php endif; ?>
+        </dd>
+    </dl>
+<?php endif; ?>
