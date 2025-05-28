@@ -109,4 +109,42 @@ class Cc extends \Magento\Payment\Model\Method\AbstractMethod
 
 
 
+    public function refund(\Magento\Payment\Model\InfoInterface $payment, $amount)
+    {
+        throw new \Magento\Framework\Exception\LocalizedException(
+            __('We can\'t issue a refund transaction because there is no capture transaction.')
+        );
+
+        if($this->canRefund()){
+
+            $order = $payment->getOrder();
+            /** @var \Pagcommerce\Payment\Model\Api\Cc $apiCc */
+            $apiCc = $this->getObjectManager()->create(\Pagcommerce\Payment\Model\Api\Cc::class);
+            try{
+                $paymentData = $payment->getAdditionalInformation();
+                $pagcommerceTransactionId = $paymentData['pagcommerce_transaction_id'];
+                try{
+                    $response = $apiCc->refundOrder($pagcommerceTransactionId);
+                    if($response){
+                        /** @var Mage_Admin_Model_Session $session */
+                        $session = Mage::getModel('admin/session');
+                        /** @var Mage_Admin_Model_User $user */
+                        $user = $session->getUser();
+                        $order->addStatusHistoryComment('Transação estornada pelo usuário '.$user->getName().' - '.$user->getEmail());
+                    }
+                    return $this;
+                }catch (\Exception $e){
+                    throw new \Exception($e->getMessage());
+                }
+
+            }catch (\Exception $e){
+                throw new \Exception($e->getMessage());
+            }
+        }
+
+
+    }
+
+
+
 }

@@ -103,14 +103,14 @@
 
                 <div class="field number required">
                     <label data-bind="attr: {for: getCode() + '_cc_name'}" class="label">
-                        <span><!-- ko i18n: 'Owner Name'--><!-- /ko --></span>
+                        <span><!-- ko i18n: 'Nome do titular do cartão'--><!-- /ko --></span>
                     </label>
                     <div class="control">
                         <input type="text" name="payment[cc_name]" class="input-text" value=""
                                data-bind="attr: {
                                     autocomplete: off,
                                     id: getCode() + '_cc_name',
-                                    title: $t('Owner Name'),
+                                    title: $t('Nome do titular do cartão'),
                                     'data-container': getCode() + '-cc-name',
                                     'data-validate': JSON.stringify({'required': true})},
                                      value: creditCardOwner,

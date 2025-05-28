@@ -273,4 +273,39 @@ abstract class AbstractApi{
     public function writeLog($title, $data = []){
         $this->logger->debug($title, $data);
     }
+
+
+    /** @return boolean */
+    public function refundOrder($pagcommerceTransactionId){
+
+        if($pagcommerceTransactionId){
+            $transaction = $this->sendRequest('payment-transaction/'.$pagcommerceTransactionId, array(), 'GET');
+            if($transaction && isset($transaction['id'])){
+                if($transaction['status'] == 'approved'){
+                    if($transaction['transaction_type'] == 'cc' || $transaction['transaction_type'] == 'pix'){
+                        $response = $this->sendRequest('payment-refund', array('transaction_id' => $transaction['id']));
+                        if($response && isset($response['refunded'])){
+                            if($response['refunded']){
+                                return true;
+                            }
+                        }else{
+                            throw new \Exception("Pagcommerce: Não é possível estornar essa transação. Por favor tente novamente. Se o problema persistir, utilize o modo offline e estorne a transação dentro do Painel Pagcommerce");
+                        }
+
+                    }else{
+                        throw new \Exception("Pagcommerce: Não é possível estornar esse tipo de transação. Só é permitido estornar vendas por Pix e por Cartão de Crédito");
+                    }
+
+                }else{
+                    throw new \Exception('Pagcommerce: Não é possível estornar essa transação porque ela não foi paga');
+                }
+
+            }else{
+                throw new \Exception("Pagcommerce: Transação não encontrada. Não é possível estornar");
+            }
+        }
+        return false;
+    }
+
+
 }
