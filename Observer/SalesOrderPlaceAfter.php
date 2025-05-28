@@ -101,7 +101,7 @@ class SalesOrderPlaceAfter implements ObserverInterface
         return (bool)$helper->getConfig('active', 'pagcommerce_payment_cc');
     }
 
-    private function confirmPayment(\Magento\Sales\Model\Order $order = null, $paymentData = array())
+    private function confirmPayment(?\Magento\Sales\Model\Order $order = null, $paymentData = array())
     {
         if ($order->canInvoice()) {
             $payment = $order->getPayment();
@@ -125,7 +125,7 @@ class SalesOrderPlaceAfter implements ObserverInterface
         }
     }
 
-
+    
     public function createInvoice($order)
     {
         $payment = $order->getPayment();

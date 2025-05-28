@@ -141,10 +141,6 @@ class Cc extends \Magento\Payment\Model\Method\AbstractMethod
                 throw new \Exception($e->getMessage());
             }
         }
-
-
     }
-
-
 
 }

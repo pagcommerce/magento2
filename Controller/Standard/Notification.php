@@ -128,7 +128,7 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
     }
 
 
-    private function confirmPayment(\Magento\Sales\Model\Order $order = null, $paymentData = array())
+    private function confirmPayment(?\Magento\Sales\Model\Order $order = null, $paymentData = array())
     {
         if ($order->canInvoice()) {
             $payment = $order->getPayment();
