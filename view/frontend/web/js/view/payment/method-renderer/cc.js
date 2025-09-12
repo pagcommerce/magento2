@@ -1,9 +1,3 @@
-/**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
-/*browser:true*/
-/*global define*/
 define(
     [
         'Magento_Checkout/js/view/payment/default',
@@ -12,9 +6,25 @@ define(
         'Magento_Payment/js/model/credit-card-validation/credit-card-number-validator',
         'mage/translate',
         'Magento_Checkout/js/action/select-payment-method',
-        'Magento_Checkout/js/checkout-data'
+        'Magento_Checkout/js/checkout-data',
+        'Magento_Checkout/js/model/quote',
+        'ko',
+        'mage/storage',
+        'mage/url'
     ],
-    function (Component, $, creditCardData, cardNumberValidator, $t, selectPaymentMethodAction, checkoutData) {
+    function (
+        Component,
+        $,
+        creditCardData,
+        cardNumberValidator,
+        $t,
+        selectPaymentMethodAction,
+        checkoutData,
+        quote,
+        ko,
+        storage,
+        urlBuilder
+    ) {
         'use strict';
 
         return Component.extend({
@@ -31,10 +41,24 @@ define(
                 taxvat: '',
                 creditCardOwner: ''
             },
+
             initialize: function () {
                 this._super();
                 this.taxvat(this.getTaxVat());
+
+                // installments como observableArray
+                this.installments = ko.observableArray(this.getInstallmentsInitial());
+
+                // observa mudanças no grand_total
+                quote.totals.subscribe(function (totals) {
+                    if (totals && totals['grand_total']) {
+                        this.updateInstallments(totals['grand_total']);
+                    }
+                }.bind(this));
+
+                return this;
             },
+
             initObservable: function () {
                 this._super()
                     .observe([
@@ -48,17 +72,19 @@ define(
                     ]);
                 return this;
             },
+
             selectPaymentMethod: function () {
                 selectPaymentMethodAction(this.getData());
                 checkoutData.setSelectedPaymentMethod(this.item.method);
                 return true;
             },
+
             getCode: function() {
                 return 'pagcommerce_payment_cc';
             },
 
             getData: function() {
-                var data = {
+                return {
                     'method': this.getCode(),
                     'additional_data': {
                         'customertaxvat': this.taxvat(),
@@ -70,8 +96,37 @@ define(
                         'installment': this.creditCardInstallments()
                     }
                 };
-                return data;
             },
+
+            /** =================== PARCELAS =================== */
+            getInstallments: function(){
+                return window.checkoutConfig.payment.pagcommerce_payment_cc.installments;
+            },
+
+            getInstallmentsInitial: function () {
+                var installments = this.getInstallments();
+                return _.map(installments, function (value, key) {
+                    return {
+                        'value': key,
+                        'parcel': value.label
+                    };
+                });
+            },
+
+            updateInstallments: function(total) {
+                var serviceUrl = urlBuilder.build('rest/V1/pagcommerce/installments/' + total);
+
+                storage.get(serviceUrl).done(function (response) {
+                    this.installments(_.map(response, function (value, key) {
+                        return {
+                            'value': key,
+                            'parcel': value.label
+                        };
+                    }));
+                }.bind(this));
+            },
+
+            /** =================== OUTROS MÉTODOS =================== */
             getCcMonths: function() {
                 return window.checkoutConfig.payment.pagcommerce_payment_cc.months;
             },
@@ -81,23 +136,12 @@ define(
             getCcYears: function() {
                 return window.checkoutConfig.payment.pagcommerce_payment_cc.years;
             },
-            getInstallments: function(){
-                return window.checkoutConfig.payment.pagcommerce_payment_cc.installments;
-            },
-            getInstallmentsValues: function() {
-                return _.map(this.getInstallments(), function(value, key) {
-                    return {
-                        'value': key,
-                        'parcel': value.label
-                    }
-                });
-            },
             getCcMonthsValues: function() {
                 return _.map(this.getCcMonths(), function(value, key) {
                     return {
                         'value': key,
                         'month': value
-                    }
+                    };
                 });
             },
             getCcYearsValues: function() {
@@ -105,7 +149,7 @@ define(
                     return {
                         'value': key,
                         'year': value
-                    }
+                    };
                 });
             },
             isActive: function () {
