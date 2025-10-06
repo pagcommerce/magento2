@@ -27,7 +27,7 @@ class InstallmentManagement implements InstallmentManagementInterface
 
         $result = [];
         foreach ($installments as $key => $data) {
-            $result[] = new InstallmentOption($key, $data['label']);
+            $result[] = new InstallmentOption($data['parcel'], $data['label']);
         }
 
         return $result;

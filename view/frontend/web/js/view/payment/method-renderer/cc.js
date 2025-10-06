@@ -107,7 +107,7 @@ define(
                 var installments = this.getInstallments();
                 return _.map(installments, function (value, key) {
                     return {
-                        'value': key,
+                        'value': value.parcel,
                         'parcel': value.label
                     };
                 });
@@ -119,7 +119,7 @@ define(
                 storage.get(serviceUrl).done(function (response) {
                     this.installments(_.map(response, function (value, key) {
                         return {
-                            'value': key,
+                            'value': value.value,
                             'parcel': value.label
                         };
                     }));
