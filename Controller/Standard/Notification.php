@@ -2,6 +2,8 @@
 
 namespace Pagcommerce\Payment\Controller\Standard;
 
+use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
+use Pagcommerce\Payment\Logger\Logger as Logger;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\App\RequestInterface;
@@ -17,6 +19,11 @@ use Magento\Framework\App\Request\InvalidRequestException;
 
 class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
 {
+
+
+    protected InvoiceSender $invoiceSender;
+
+    protected Logger $logger;
 
     /**
      * @var RequestInterface
@@ -50,6 +57,8 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
+        InvoiceSender $invoiceSender,
+        Logger $logger,
         RequestInterface $request,
         OrderFactory $factory,
         TransactionApi $transactionApi,
@@ -59,6 +68,8 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
         OrderRepository $orderRepository
     )
     {
+        $this->invoiceSender = $invoiceSender;
+        $this->logger = $logger;
         $this->_request = $request;
         $this->_orderFactory = $factory;
         $this->transactionApi = $transactionApi;
@@ -140,6 +151,15 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
             $invoice->pay();
             !$invoice->getTransactionId() ? $invoice->setTransactionId($paymentData['id']) : null;
             $this->invoiceRepository->save($invoice);
+
+            // envia o e-mail
+            try {
+                $this->invoiceSender->send($invoice);
+                $invoice->setEmailSent(true);
+                $this->invoiceRepository->save($invoice);
+            } catch (\Exception $e) {
+                $this->logger->debug('Erro ao enviar e-mail de fatura: '.$e->getMessage());
+            }
 
             $payment->setAdditionalInformation('captured', true);
             $payment->setAdditionalInformation('captured_date', date('Y-m-d h:i:s'));
