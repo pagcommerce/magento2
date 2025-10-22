@@ -307,5 +307,25 @@ abstract class AbstractApi{
         return false;
     }
 
+    public function getPaymentStatus($payment): mixed
+    {
+        $paymentStatus = false;
+        $id = $payment->getData('last_trans_id') ?? false;
+        if ($id) {
+            $transactionPayment = $this->sendRequest('payment-transaction/'.$id, [], 'GET');
+            if (is_array($transactionPayment)) {
+                $paymentStatus = $transactionPayment['status'] ?? false;
+            }
+        }
+        return $paymentStatus;
+    }
 
+    public function getTransactionUriByStatus($paymentStatus): string
+    {
+        if ($paymentStatus === 'approved') {
+            return 'payment-refund';
+        }
+
+        return 'payment-cancel';
+    }
 }
