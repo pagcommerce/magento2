@@ -98,23 +98,26 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
                         if(isset($transaction['id']) && $transaction['id'] == $data['id']){
                             if($transaction['status'] == 'approved'){
                                 $this->confirmPayment($order, $data);
+                                return $this->createResult(200, [
+                                    'message' => 'Notificação finalizada'
+                                ]);
                             }
                         }
                     }
                 }else{
-                    return $this->createResult(200, [
+                    return $this->createResult(403, [
                         'message' => 'Pedido não aprovado'
                     ]);
                 }
             }else{
-                return $this->createResult(200, [
+                return $this->createResult(404, [
                     'message' => 'Pedido não encontrado'
                 ]);
             }
         }
 
-        return $this->createResult(200, [
-            'message' => 'Notificação finalizada'
+        return $this->createResult(500, [
+            'message' => 'Parâmetros inválidos'
         ]);
     }
 
