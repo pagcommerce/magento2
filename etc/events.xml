@@ -9,8 +9,8 @@
         <observer name="Pagcommerce_Payment::sales_order_creditmemo_save_after" instance="Pagcommerce\Payment\Observer\Sales\Order\CreditmemoAfter"/>
     </event>
 
-    <event name="sales_order_save_after">
-        <observer name="Pagcommerce_Payment::sales_order_save_after" instance="Pagcommerce\Payment\Observer\Sales\Order\SaveAfter"/>
-    </event>
+<!--    <event name="sales_order_save_after">-->
+<!--        <observer name="Pagcommerce_Payment::sales_order_save_after" instance="Pagcommerce\Payment\Observer\Sales\Order\SaveAfter"/>-->
+<!--    </event>-->
 
 </config>

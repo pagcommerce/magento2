@@ -23,7 +23,7 @@ class SaveAfter implements ObserverInterface
             $payment = $order->getPayment();
             $paymentMethod = $payment->getMethodInstance()->getCode();
             if ($paymentMethod == 'pagcommerce_payment_pix' || $paymentMethod == 'pagcommerce_payment_boleto' || $paymentMethod == 'pagcommerce_payment_cc') {
-                $this->paymentCancel->cancelPayment($order);
+                //$this->paymentCancel->cancelPayment($order);
             }
         }
     }
