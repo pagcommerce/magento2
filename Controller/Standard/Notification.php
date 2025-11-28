@@ -2,6 +2,10 @@
 
 namespace Pagcommerce\Payment\Controller\Standard;
 
+use Magento\Framework\Exception\AlreadyExistsException;
+use Magento\Framework\Exception\InputException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Pagcommerce\Payment\Logger\Logger as Logger;
 use Magento\Framework\App\Action\HttpPostActionInterface;
@@ -141,22 +145,29 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
         return true;
     }
 
-
+    /**
+     * @throws NoSuchEntityException
+     * @throws AlreadyExistsException
+     * @throws LocalizedException
+     * @throws InputException
+     */
     private function confirmPayment(?\Magento\Sales\Model\Order $order = null, $paymentData = array())
     {
         if ($order->canInvoice()) {
-            $payment = $order->getPayment();
-
-            /** @var \Magento\Sales\Model\Order\Invoice $invoice */
             $invoice = $order->prepareInvoice();
             $invoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);
             $invoice->register();
             $invoice->pay();
             !$invoice->getTransactionId() ? $invoice->setTransactionId($paymentData['id']) : null;
             $this->invoiceRepository->save($invoice);
+        } else {
+            $invoice = $order->getInvoiceCollection()->getFirstItem();
+        }
 
-            // envia o e-mail
+        if ($order->getState() != \Magento\Sales\Model\Order::STATE_PROCESSING) {
+
             try {
+                // envia o e-mail
                 $this->invoiceSender->send($invoice);
                 $invoice->setEmailSent(true);
                 $this->invoiceRepository->save($invoice);
@@ -164,6 +175,7 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
                 $this->logger->debug('Erro ao enviar e-mail de fatura: '.$e->getMessage());
             }
 
+            $payment = $order->getPayment();
             $payment->setAdditionalInformation('captured', true);
             $payment->setAdditionalInformation('captured_date', date('Y-m-d h:i:s'));
             $paidStatus = $this->helperData->getConfig('paid_order_status', $payment->getMethod()) ?: null;
@@ -173,4 +185,3 @@ class Notification implements HttpPostActionInterface,  CsrfAwareActionInterface
         }
     }
 }
-
