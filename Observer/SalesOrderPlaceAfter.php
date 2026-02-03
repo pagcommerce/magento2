@@ -3,6 +3,10 @@
 namespace Pagcommerce\Payment\Observer;
 
 
+use Magento\Framework\Exception\AlreadyExistsException;
+use Magento\Framework\Exception\InputException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Pagcommerce\Payment\Logger\Logger as Logger;
 use Magento\Framework\Event\ObserverInterface;
@@ -81,7 +85,6 @@ class SalesOrderPlaceAfter implements ObserverInterface
      */
     public function execute(EventObserver $observer)
     {
-
         return $this;
         if (!$this->moduleIsEnable()) {
             return $this;
@@ -103,7 +106,7 @@ class SalesOrderPlaceAfter implements ObserverInterface
         return $this;
     }
 
-    public function moduleIsEnable()
+    public function moduleIsEnable(): bool
     {
         $objectManager = ObjectManager::getInstance();
         /** @var \Pagcommerce\Payment\Helper\Data $helper */
@@ -111,12 +114,17 @@ class SalesOrderPlaceAfter implements ObserverInterface
         return (bool)$helper->getConfig('active', 'pagcommerce_payment_cc');
     }
 
-    private function confirmPayment(?\Magento\Sales\Model\Order $order = null, $paymentData = array())
+    /**
+     * @throws NoSuchEntityException
+     * @throws AlreadyExistsException
+     * @throws LocalizedException
+     * @throws InputException
+     */
+    private function confirmPayment(?\Magento\Sales\Model\Order $order = null, $paymentData = array()): void
     {
         if ($order->canInvoice()) {
             $payment = $order->getPayment();
 
-            /** @var \Magento\Sales\Model\Order\Invoice $invoice */
             $invoice = $order->prepareInvoice();
             $invoice->setOrder($order);
             $invoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);
@@ -126,26 +134,28 @@ class SalesOrderPlaceAfter implements ObserverInterface
             !$invoice->getTransactionId() ? $invoice->setTransactionId($paymentData['id']) : null;
             $this->invoiceRepository->save($invoice);
 
-            // envia o e-mail
-            try {
-                $this->invoiceSender->send($invoice);
-                $invoice->setEmailSent(true);
-                $this->invoiceRepository->save($invoice);
-            } catch (\Exception $e) {
-                $this->logger->debug('Erro ao enviar e-mail de fatura: '.$e->getMessage());
-            }
-
             $payment->setAdditionalInformation('captured', true);
             $payment->setAdditionalInformation('captured_date', date('Y-m-d h:i:s'));
             $paidStatus = $this->helperData->getConfig('paid_order_status', $payment->getMethod()) ?: null;
             $order->addCommentToStatusHistory(__('Pagamento confirmado automaticamente'), $paidStatus);
             $order->setState(\Magento\Sales\Model\Order::STATE_PROCESSING);
             $this->orderRepository->save($order);
+
+            try {
+                $this->invoiceSender->send($invoice, true);
+                $invoice->setEmailSent(true);
+                $this->invoiceRepository->save($invoice);
+            } catch (\Exception $e) {
+                $this->logger->debug(
+                    'Erro ao enviar e-mail da fatura **manualmente** do pedido #' .
+                    $order->getIncrementId() . ': ' . $e->getMessage()
+                );
+            }
         }
     }
 
 
-    public function createInvoice($order)
+    public function createInvoice($order): bool
     {
         $payment = $order->getPayment();
         $payment
@@ -155,7 +165,6 @@ class SalesOrderPlaceAfter implements ObserverInterface
                 true
             );
         $order->save();
-
 
         $invoice = $payment->getCreatedInvoice();
         if ($invoice && !$order->getEmailSent()) {
@@ -171,6 +180,4 @@ class SalesOrderPlaceAfter implements ObserverInterface
 
         return true;
     }
-
-
 }
