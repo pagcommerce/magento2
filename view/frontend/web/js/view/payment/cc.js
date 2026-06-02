@@ -8,8 +8,7 @@ define(
     [
         'uiComponent',
         'Magento_Checkout/js/model/payment/renderer-list',
-        'jquery',
-        'inputmask'
+        'jquery'
     ],
     function (
         Component,
@@ -28,8 +27,28 @@ define(
             initialize: function () {
                 this._super();
                 const checkCpfCnpjLength = setInterval(() => {
-                    if ($('input[name="payment[cc_cpf]"]').length) {
-                        Inputmask(['999.999.999-99', '99.999.999/9999-99']).mask('input[name="payment[cc_cpf]"]');
+                    let field = $('input[name="payment[cc_cpf]"]');
+
+                    if (field.length) {
+                        field.on('keyup', function () {
+                            let v = $(this).val();
+
+                            v = v.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+
+                            if (v.length <= 11) {
+                                v = v.replace(/([a-zA-Z0-9]{3})([a-zA-Z0-9])/, '$1.$2');
+                                v = v.replace(/([a-zA-Z0-9]{3})([a-zA-Z0-9])/, '$1.$2');
+                                v = v.replace(/([a-zA-Z0-9]{3})([a-zA-Z0-9]{1,2})$/, '$1-$2');
+                            } else {
+                                v = v.replace(/^([a-zA-Z0-9]{2})([a-zA-Z0-9])/, '$1.$2');
+                                v = v.replace(/^([a-zA-Z0-9]{2})\.([a-zA-Z0-9]{3})([a-zA-Z0-9])/, '$1.$2.$3');
+                                v = v.replace(/\.([a-zA-Z0-9]{3})([a-zA-Z0-9])/, '.$1/$2');
+                                v = v.replace(/([a-zA-Z0-9]{4})([a-zA-Z0-9])/, '$1-$2');
+                            }
+
+                            $(this).val(v);
+                        });
+
                         clearInterval(checkCpfCnpjLength);
                     }
                 }, 100);

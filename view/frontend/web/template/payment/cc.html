@@ -1,6 +1,6 @@
 <!--
 /**
- * Pagcommerce CC Template
+ * * Pagcommerce CC Template
  */
 -->
 <div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
@@ -136,6 +136,7 @@
                     <div class="control">
                         <input type="text" name="payment[cc_cpf]" class="input-text"
                                data-bind="attr: {
+                                    maxlength: 18,
                                     autocomplete: 'off',
                                     id: getCode() + '_cc_cpf',
                                     title: $t('CPF/CNPJ'),
